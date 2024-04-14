@@ -2,6 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../components/ui/Button';
 import { uploadImage } from '../api/uploader';
+import { addNewProduct } from '../api/firebase';
 
 function NewProduct() {
   const {
@@ -31,10 +32,10 @@ function NewProduct() {
     setValue('file', files[0]);
   };
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = (product) => {
+    console.log(product);
     uploadImage(file).then((url) => {
-      console.log(url);
+      addNewProduct(product, url);
     });
   };
 

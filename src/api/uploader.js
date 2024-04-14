@@ -9,6 +9,5 @@ export async function uploadImage(file) {
   });
 
   const result = await response.json();
-  console.log(result);
   return result.url;
 }
