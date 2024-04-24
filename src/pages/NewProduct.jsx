@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../components/ui/Button';
 import { uploadImage } from '../api/uploader';
@@ -21,6 +21,8 @@ function NewProduct() {
     },
   });
   const file = watch('file');
+  const [isUploading, setIsUploading] = useState(false);
+  const [success, setSuccess] = useState();
 
   // 파일 입력을 위한 리스너 설정
   React.useEffect(() => {
@@ -34,20 +36,36 @@ function NewProduct() {
 
   const onSubmit = (product) => {
     console.log(product);
-    uploadImage(file).then((url) => {
-      addNewProduct(product, url);
-    });
+    setIsUploading(true);
+    uploadImage(file) //
+      .then((url) => {
+        addNewProduct(product, url) //
+          .then(() => {
+            setSuccess('성공적으로 제품이 등록되었습니다.');
+            setTimeout(() => {
+              setSuccess(null);
+            }, 4000);
+          });
+      }) //
+      .finally(() => {
+        setIsUploading(false);
+      });
   };
 
   return (
-    <section>
+    <section className='w-full text-center'>
+      <h2 className='text-2xl font-bold my-4'>새로운 제품 등록</h2>
+      {success && <p className='my-2'>✅ {success}</p>}
       {file && (
         <img
+          className='w-96 mx-auto mb-2'
           src={URL.createObjectURL(file)}
           alt='file preview'
         />
       )}
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className='flex flex-col px-12'
+        onSubmit={handleSubmit(onSubmit)}>
         <input
           type='file'
           accept='image/*'
@@ -88,7 +106,8 @@ function NewProduct() {
         />
         {errors.options && <p>{errors.options.message}</p>}
         <Button
-          text='등록'
+          text={isUploading ? '업로딩 중...' : '제품 등록 하기'}
+          disabled={isUploading}
           type='submit'
         />
       </form>
