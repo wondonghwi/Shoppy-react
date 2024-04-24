@@ -36,7 +36,6 @@ function NewProduct() {
   };
 
   const onSubmit = (product) => {
-    console.log(product);
     setIsUploading(true);
     uploadImage(file) //
       .then((url) => {
