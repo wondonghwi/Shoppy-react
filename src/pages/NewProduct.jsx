@@ -10,6 +10,7 @@ function NewProduct() {
     handleSubmit,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -45,6 +46,7 @@ function NewProduct() {
             setTimeout(() => {
               setSuccess(null);
             }, 4000);
+            reset();
           });
       }) //
       .finally(() => {
