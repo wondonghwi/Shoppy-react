@@ -4,7 +4,7 @@ import { BsFillPencilFill } from 'react-icons/bs';
 import { login, logout } from '../api/firebase';
 import User from './User';
 import Button from './ui/Button';
-import { useAuthContext } from './context/AuthContext';
+import { useAuthContext } from '../context/AuthContext';
 
 function Navbar() {
   const { user } = useAuthContext();
