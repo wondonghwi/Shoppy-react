@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import Button from '../components/ui/Button';
 import { uploadImage } from '../api/uploader';
 import { addNewProduct } from '../api/firebase';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 function NewProduct() {
   const {
@@ -24,8 +25,12 @@ function NewProduct() {
   const file = watch('file');
   const [isUploading, setIsUploading] = useState(false);
   const [success, setSuccess] = useState();
+  const queryClient = useQueryClient();
+  const addProduct = useMutation({
+    mutationFn: ({ product, url }) => addNewProduct(product, url),
+    onSuccess: () => queryClient.invalidateQueries(['products']),
+  });
 
-  // 파일 입력을 위한 리스너 설정
   React.useEffect(() => {
     register('file', { required: true });
   }, [register]);
@@ -37,17 +42,21 @@ function NewProduct() {
 
   const onSubmit = (product) => {
     setIsUploading(true);
-    uploadImage(file) //
+    uploadImage(file)
       .then((url) => {
-        addNewProduct(product, url) //
-          .then(() => {
-            setSuccess('성공적으로 제품이 등록되었습니다.');
-            setTimeout(() => {
-              setSuccess(null);
-            }, 4000);
-            reset();
-          });
-      }) //
+        addProduct.mutate(
+          { product, url },
+          {
+            onSuccess: () => {
+              setSuccess('성공적으로 제품이 등록되었습니다.');
+              setTimeout(() => {
+                setSuccess(null);
+              }, 4000);
+              reset();
+            },
+          },
+        );
+      })
       .finally(() => {
         setIsUploading(false);
       });
