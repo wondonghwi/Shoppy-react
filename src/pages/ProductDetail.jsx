@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Button from '../components/ui/Button';
-import { useAuthContext } from '../context/AuthContext';
-import { addOrUpdateToCart } from '../api/firebase';
+import { useCart } from '../hooks/useCart';
 
 function ProductDetail() {
-  const { uid } = useAuthContext();
+  const { addOrUpdateItem } = useCart();
 
   const {
     state: {
@@ -14,14 +13,20 @@ function ProductDetail() {
   } = useLocation();
 
   const [selected, setSelected] = useState(options && options[0]);
+  const [success, setSuccess] = useState(null);
 
   const handleSelect = (e) => {
     setSelected(e.target.value);
   };
 
-  const handleClick = (e) => {
+  const handleClick = () => {
     const product = { id, image, title, price, option: selected, quantity: 1 };
-    addOrUpdateToCart(uid, product);
+    addOrUpdateItem.mutate(product, {
+      onSuccess: () => {
+        setSuccess('✅ 장바구니에 추가되었습니다.');
+        setTimeout(() => setSuccess(null), 3000);
+      },
+    });
   };
 
   return (
@@ -36,7 +41,7 @@ function ProductDetail() {
         <div className='w-full basis-5/12 flex flex-col p-4'>
           <h2 className='text-3xl font-bold py-2'>{title}</h2>
           <p className='text-2xl font-bold py-2 border-b border-gray-400'>
-            ₩{price}
+            ₩{price.toLocaleString('ko-KR')}
           </p>
           <p className='py-4 text-lg'>{description}</p>
           <div className='flex items-center'>
@@ -62,6 +67,7 @@ function ProductDetail() {
                 })}
             </select>
           </div>
+          {success && <p className='my-2'>{success}</p>}
           <Button
             text='장바구니에 추가'
             onClick={handleClick}

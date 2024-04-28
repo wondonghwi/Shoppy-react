@@ -48,17 +48,17 @@ export default function MyCart() {
           <div className='flex justify-between items-center mb-6 px-2 md:px-8 lg:px-16'>
             <PriceCard
               text='상품 총액'
-              price={totalPrice}
+              price={totalPrice.toLocaleString('ko-KR')}
             />
             <BsFillPlusCircleFill className='shrink-0' />
             <PriceCard
               text='배송액'
-              price={SHIPPING}
+              price={SHIPPING.toLocaleString('ko-KR')}
             />
             <FaEquals className='shrink-0' />
             <PriceCard
               text='총가격'
-              price={totalPrice + SHIPPING}
+              price={(totalPrice + SHIPPING).toLocaleString('ko-KR')}
             />
           </div>
           <Button text='주문하기' />
